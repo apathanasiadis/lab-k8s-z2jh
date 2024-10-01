@@ -22,7 +22,7 @@ hub:
       lookup_dn: true
       lookup_dn_search_filter: "(sAMAccountName={login})"
       lookup_dn_search_user: "ldapsearch@lnn.timone.univ-mrs.fr"
-      lookup_dn_search_password: "iamstupid"
+      lookup_dn_search_password: "sthstupid"
       lookup_dn_user_dn_attribute: "cn"  
       lookup_dn_user_attribute: sAMAccountName
       user_attribute: sAMAccountName
