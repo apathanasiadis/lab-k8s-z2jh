@@ -1,0 +1,62 @@
+hub:
+  networkPolicy:
+    enabled: false
+#  extraConfig: 
+#    00-kubespawner-namespaces: |
+#      c.KubeSpawner.enable_user_namespaces = True
+#      c.KubeSpawner.user_namespace_template = "{username}"
+#      c.KubeSpawner.hub_connect_url = "http://hub.jhub.svc.cluster.local:8081"
+  config:
+    # Configuring JupyterHub to use KubeSpawner
+    JupyterHub:
+      spawner_class: kubespawner.KubeSpawner
+      authenticator_class: ldapauthenticator.LDAPAuthenticator
+    LDAPAuthenticator:
+      server_address: 139.124.150.54
+      user_search_base: "ou=Users,ou=TNG,dc=lnn,dc=timone,dc=univ-mrs,dc=fr"
+     # allowed_groups:
+     #   - cn=tng_user,ou=TNG,dc=lnn,dc=timone,dc=univ-mrs,dc=fr
+     # bind_dn_template:
+     #   - sAMAccountName={username},ou=Users,ou=TNG,dc=lnn,dc=timone,dc=univ-mrs,dc=fr 
+      escape_userdn: false
+      lookup_dn: true
+      lookup_dn_search_filter: "(sAMAccountName={login})"
+      lookup_dn_search_user: "ldapsearch@lnn.timone.univ-mrs.fr"
+      lookup_dn_search_password: "iamstupid"
+      lookup_dn_user_dn_attribute: "cn"  
+      lookup_dn_user_attribute: sAMAccountName
+      user_attribute: sAMAccountName
+#      tls_strategy: before_bind
+      attributes: ["sAMAccountName", "cn", "mail", "ou", "o"]
+  image:
+      pullPolicy: IfNotPresent  # which is the default one.
+prePuller:
+  continuous:
+    enabled: false
+  hook:
+    enabled: false
+    
+singleuser:
+ # Must be specific image that matches JupyterHub requirements
+  defaultUrl: /lab 
+  profileList:
+  - display_name: "Base"
+    kubespawner_override:
+      image: jupyter/base-notebook
+    description: |
+       Small base image provided by Jupyter project supporting the
+       options common across all stacks for which this is the foundation.
+       All other official images are build on this base.
+  - display_name: "Minimal"
+    kubespawner_override:
+      image: jupyter/minimal-notebook
+  - display_name: "Datascience"
+    description: "Additional bells and whistles: Julia, Python, R."
+    kubespawner_override:
+      image: jupyter/datascience-notebook
+   - display_name: "Custom Image - Singleuser"
+    description: "This is a custom image with pre-installed software."
+    kubespawner_override:
+      image: apathanasiadis/customized:v0
+ #debug:
+ # enabled: true
